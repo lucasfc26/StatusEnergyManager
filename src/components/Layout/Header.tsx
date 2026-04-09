@@ -1,6 +1,6 @@
 import { Moon, Sun, LogOut, Bell, User } from "lucide-react";
 import { useStore } from "../../store";
-import Logo from "../../assets/logo.png";
+import Logo from "../../assets/Logo.png";
 
 export function Header() {
   const { user, darkMode, toggleDarkMode, logout } = useStore();
