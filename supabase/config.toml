@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "functions": {
+    "clientes": {
+      "import_map": "./functions/import_map.json",
+      "verify_jwt": true
+    },
+    "ucs": {
+      "import_map": "./functions/import_map.json",
+      "verify_jwt": true
+    }
+  }
+}

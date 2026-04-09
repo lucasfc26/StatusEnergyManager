@@ -1,0 +1,70 @@
+# Dependências
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Variáveis de ambiente
+.env
+.env.local
+.env.*.local
+
+# Arquivos de compilação/build
+dist/
+build/
+.vite/
+.next/
+out/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Testes
+coverage/
+.nyc_output/
+*.lcov
+
+# Logs
+logs/
+*.log
+
+# Runtime de dados
+*.pdb
+
+# Cache
+.cache/
+.parcel-cache/
+
+# Miscellaneous
+.turbo/
+tmp/
+temp/
+*.pid
+*.seed
+*.pid.lock
+
+# Supabase
+supabase/.branches/
+supabase/functions/.env
+supabase/migrations/
+
+# OS
+Thumbs.db
+.env.*.swp
+
+# Credenciais e dados sensíveis
+.aws-samcli-metadata
+*.key
+credentials.json

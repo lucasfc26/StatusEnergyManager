@@ -1,0 +1,143 @@
+{BARCODE}
+Companhia Energética do Ceará
+Rua Padre Valdevino, 150
+Fortaleza - CE - CEP: 60135-040
+CNPJ: 07.047.251/0001-70 - CGF: 06.105.848-3
+DOCUMENTO AUXILIAR DA NOTA FISCAL DE ENERGIA ELÉTRICA ELETRÔNICA
+LEITURA ANTERIOR LEITURA ATUAL PRÓXIMA LEITURA Nº DE DIAS TIPO DE FORNECIMENTO CLASSIFICAÇÃO DA UNIDADE CONSUMIDORA
+DATAS DE
+B1*(TIPO_B) RESIDENCIAL-CONV. Residencial
+LEITURA TRIFÁSICO*(alimentação fases) 08/02/2025 11/03/2025*data leitura(mes_ref) 31 08/04/2025
+Residencial
+CONDOMINIO JARDINS DE FATIMA RESIDENCE
+INSTALAÇÃO / INFORMAÇÕES FISCAIS
+RU RANGEL PESTANA 00950 CS CONDOMINIO
+UNIDADE CONSUMIDORA
+CONJUNTO ALVORADA FORTALEZA CE B^^^B:o&XU2o$7VubS mv7$ xAjB^^^B
+NOTA FISCAL Nº 157648201 - SÉRIE ÚNICA / DATA DE EMISSÃO: 27/03/2025
+CEP: 60833-012
+Consulte pela Chave de Acesso em: > +bDt;7W Z{)JWY-;+a;*WuP0#&!(
+CPF/CNPJ: 05.535.288/0001-12 INSC EST: ISENTO 2595111
+http://dfe-portal.sefazvirtual.rs.gov.br/NF3e/consulta
+chave de acesso: 4Ey8AhV!V_:W{KtE~ aL"|TE[t;x }=gxQp
+N O DO CLIENTE
+2325 0307 0472 5100 0170 6600 0157 6482 0110 5399 3032
+Protocolo de autorização: 3232500011521715 - 27/03/2025 às 21:39:31-03:00 G=g]+X-#!T!1UM*#77#WV;Q` .
+2595111 *(Unidade) CFOP 5258: VENDA DE ENERGIA ELETRICA A NAO CONTRIBUINTE
+Data de apresentação: 03/04/2025 >R.2nVac.7cfpYhS@W,`Z ;u4THN0mezU
+TOTAL A PAGAR VENCIMENTO MÊS/ANO
+;;;/g+c C9yS#7!Wcc;)##Qa+/;oAyu
+03/2025 10/04/2025 R$ 0,00
+MENSAGENS IMPORTANTES
+Períodos: Band. Tarif.: Verde : 09/02 - 11/03 Bandeira verde em março/25, sem custos adicionais na fatura. Informações: www.aneel.gov.br. Energia Injetada HFP no mês: 0*(energia injetada.check()) kWh. Saldo utilizado no mês: 904.02*(credito utilizado) kWh. Saldo
+atualizado: 0*(saldo atualizado) kWh. Créditos a Expirar no próximo mês: 0 kWh.
+TRIBUTOS BASE ALÍQUOTA VALOR
+DESCRIÇÃO DO FATURAMENTO CONSUMO / kWh
+CALC (R$) (%) (R$)
+Itens de Fatura Unid. Quant. Preço unit (R$) Valor (R$) PIS/COFINS Base Calc Alíquota ICMS Tarifa
+com tributos ICMS (R$) ICMS unit (R$) PIS/PASEP 137,90 0,37*(pis_pasep) 0,52 MÊS/ANO COMSUMO DIAS TIPOS DE
+COFINS 137,90 1,68*(cofins) 2,33 FATURADO (kWh) FATURAMENTO
+MAR25 31 LID
+Energia Ativa Fornecida TE kWh 1.091*(consumo.check()) 0,34826*(tarifa_cons_TE) 379,95 6,22 379,95 20,00%*(icms) 75,99 0,27291*(tarifa_homologada_TE) I CMS 690,68 20,00 138,14 1091.00
+FEV25 1060.00 30 LID
+Energia Ativa Fornecida TUSD kWh 1.091 0,57335 625,52 10,25 625,52 20,00% 125,10 0,44929
+Energia Atv Inj TE oUC 02/2025 mPT kWh 71 0,34798-*(tarifa_comp_TE) 24,77- 0,40- 24,77- 20,00% 4,95- 0,27291 JAN25 1299.00 31 LID
+DEZ24 1268.00 30 LID
+Energia Atv Inj TE oUC 03/2025 mPT kWh 832 0,34823- 290,02- 4,74- 290,02- 20,00% 58,00- 0,27291
+Energia Atv Inj TUSD oUC 02/2025 mPT kWh 71 0,45854- 32,64- 0,66- 0,00 0,00% 0,00 0,44929 NOV24 1176.00 31 LID
+OUT24 1014.00 29 LID
+Energia Atv Inj TUSD oUC 03/2025 mPT kWh 832 0,45867- 382,00- 7,82- 0,00 0,00% 0,00 0,44929
+Crédito Próximas Faturas 850,43 0,00 0,00 0,00% 0,00 SET24 1152.00 33 LID
+AGO24 1053.00 30 LID
+CIP ILUM PUB PREF MUNICIPAL 137,67 0,00 0,00 0,00% 0,00
+Pagamento Duplicidade/Não Loc 1.264,14- 0,00 0,00 0,00% 0,00 JUL24 1093.00 31 LID
+JUN24 1104.00 30 LID
+Subtotal Faturamento 276,04 MAI24 1201.00 31 LID
+ABR24 1115.00 31 LID
+Subtotal Outros 276,04-
+MAR24 1026.00 29 LID
+0,00 2,85 690,68 138,14
+TOTAL
+EQUIPAMENTOS DE MEDIÇÃO E CONSUMO NO PERIODO
+N° Medidor P.Horário/Segmento Data Leitura Leitura Data Leitura Leitura Fator Multiplicador Consumo kWh N° Dias
+3711877-NAN-280 HFP 09/02/2025 49901.0 11/03/2025 50992.0 1.0 1091.0 31
+RESERVADO AO FISCO
+Novo modelo de Nota Fiscal de Energia Elétrica nos termos do Ajuste Sinief 01/2019
+(CONFAZ)
+NOTIFICAÇÃO/REAVISO DE CONTAS VENCIDAS
+DADOS DE MEDIÇÃO
+Medidor Grandezas Postos Leitura Leitura Const. Consumo
+Tarifários Anterior Atual Medidor kWh
+3711877-NAN-280 ENERGIA ATIVA - KWH HFP 49901.00 50992.00 1.00 1091.00*(consumo.check()) *(checar com a proxima linha onde tenha ENERGIA INJETADA HFP INJ *(energia_injetada.check()))
+RESPONSÁVEL PELA ILUMINAÇÃO PÚBLICA EM SUA RUA/REGIÃO CADASTRO DE DÉBITO AUTOMÁTICO
+PREFEITURA MUNICIPAL FORTALEZA Se você ainda não tem débito automático, cadastra-se na sua instituição bancária utilizando o código 2595111
+ENEL
+Pagador: CPF:
+CONDOMINIO JARDINS DE FATIMA RESIDENCE
+Emissão: Nota Fiscal: Referência: Vencimento: Total:
+27/03/2025 0202503157648201 04/2025 10/04/2025 0,00
+FATURA PAGA. NÃO RECEBER
+Nº de controle: Mensagem:
+Espaço reservado
+para o QRCode Pix.
+******** CONTA PAGA ********
+CONHEÇA NOSSOS CANAIS DE ATENDIMENTO INFORMAÇÕES AOS CLIENTES
+Atendimento 24 horas Para comunicar falta de energia, tirar dúvidas, solicitar • Informações suplementares desta conta podem ser consultadas no site, na área reservada ao cliente.
+080 0 285 0196 serviços ou fazer uma reclamação. A ligação é gratuita. • As condições gerais de fornecimento, tarifas, produtos, serviços prestados e tributos, entre outras
+informações, podem ser consultadas no site e nos demais canais de atendimento.
+Atendimento para Atendimento exclusivo para deficientes auditivos para comunicar
+• A falta de pagamento desta conta implicará a suspensão do fornecimento de energia a partir do 16° dia
+Deficientes Auditivos falta de energia, tirar dúvidas, solicitar serviços ou fazer uma
+da notificação de débito. No caso de Tarifa Social de Baixa Renda, a suspensão do fornecimento deverá
+24 horas 08 0 0 280 1887 reclamação. A ligação é gratuita. ocorrer com intervalo mínimo de 30 dias entre a data de vencimento e a efetiva suspensão.
+• Contas pagas após o vencimento terão multa de 2%, juros de mora de 0,033% ao dia e atualização
+Ouvidoria 0800 280 4100 Para acionar a Ouvidoria é necessário que você já tenha
+financeira na próxima conta.
+(atendimento em dias procurado os nossos Canais de Atendimento e nos informe
+• Todos os significados das siglas e abreviações utilizadas nesta conta de energia estão disponíveis no site
+úteis das 8h às 18h) o número de protocolo.
+da distribuidora, no campo: “Para Você, Informativos e Glossário - Conta de energia”.
+• Informações sobre a contribuição para custeio do serviço de Iluminação Pública do seu município estão
+disponíveis no site da distribuidora, no campo “Para Você, Tarifas, Taxas e Impostos”.
+CONHEÇA NOSSOS CANAIS DIGITAIS
+• Você pode solicitar o cancelamento da cobrança de serviços de terceiros incluídos em sua conta, bem como
+a emissão de uma nova sem essa cobrança.
+Agência Virtual Para ter acesso a vários serviços como 2ª via de conta, religação
+www.enel.com.br de energia, informar falta de energia e muito mais.
+Você também pode solicitar serviços pelo nosso aplicativo. Baixe RECEBA SUA CONTA POR E-MAIL
+Aplicativo
+agora (pelo Google Play ou App Store) e tenha, a todo momento,
+Enel Ceará
+os serviços da Enel ao seu alcance.
+Quer mais facilidade? Acesse sua conta de onde estiver,
+Adicione aos seus contatos a atendente virtual Elena e envie
+Atendente Virtual Elena pelo celular ou computador.
+uma mensagem via WhatsApp para consultar débitos,
+( 21 ) 99601-9608
+solicitar 2° via de conta e comunicar falta de energia.
+Cadastre-se já usando o QR Code ao lado.
+Agência Reguladora de Serviços Públicos do Estado do Ceará.
+AR CE | 0800 727 0167 01 - MUDOU-SE 07 - AUSENTE Reintegrado ao Serviço Postal em:
+(Ligação gratuita de telefones fixos e móveis).
+02 - ENDEREÇO INSUFICIENTE / / 08 - NÃO PROCURADO
+Agência Nacional de Energia Elétrica (Ligação gratuita de telefones fixos e móveis). ANEEL | 167
+03 - NÃO EXISTE N ˚ INDICADO 09 - OBJETO DANIFICADO
+Rúbrica do Responsável:
+Siga as nossas redes sociais
+@enelbrasil @enelclientesbr 04 - FALECIDO 10 - ED. DESCONHECIDO NA LOCALIDADE
+05 - DESCONHECIDO 11 - FALTA COMPLEMENTO
+Endereço para devolução - uso exclusivo dos Correios
+06 - RECUSADO Matrícula: 12 - CAIXA POSTAL CANCELADA
+Companhia Energética do Ceará
+Rua Padre Valdevino, 150 - Fortaleza - CE - CEP: 60135-040
+Companhia Energética do Ceará
+Rua Padre Valdevino, 150
+Fortaleza - CE - CEP: 60135-040
+CNPJ: 07.047.251/0001-70 - CGF: 06.105.848-3
+FOM05U36 50600 3711877-NAN-280
+CONDOMINIO JARDINS DE FATIMA RESIDENCE
+RU RANGEL PESTANA 00950
+CS CONDOMINIO FORTALEZA CONJUNTO ALVORADA 60833-012
+FOM05U36 50600
+2595111
+27/03/2025 03/2025 10/04/2025
