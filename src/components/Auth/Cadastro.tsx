@@ -101,20 +101,34 @@ export function Cadastro() {
 
     setLoading(true);
     try {
-      const { error: signUpError } = await supabase.auth.signUp({
-        email: formData.email.trim().toLowerCase(),
-        password: formData.senha,
-        options: {
-          data: {
-            nome: formData.nome.trim(),
-            empresa: formData.empresa.trim(),
+      const { data: signUpData, error: signUpError } =
+        await supabase.auth.signUp({
+          email: formData.email.trim().toLowerCase(),
+          password: formData.senha,
+          options: {
+            data: {
+              nome: formData.nome.trim(),
+              empresa: formData.empresa.trim(),
+            },
           },
-        },
-      });
+        });
 
       if (signUpError) {
         setError(signUpError.message);
         return;
+      }
+
+      // Cria automaticamente o role 'cliente' para o novo usuário
+      if (signUpData.user?.id) {
+        const { error: roleError } = await supabase.from("user_roles").insert({
+          user_id: signUpData.user.id,
+          role: "cliente",
+        });
+
+        if (roleError) {
+          console.error("Erro ao criar role:", roleError);
+          // Não impede o fluxo, apenas registra o erro
+        }
       }
 
       setStep(3);
@@ -148,6 +162,17 @@ export function Cadastro() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
       <div className="container mx-auto px-4 py-8">
+        {/* Link to go back to login */}
+        <div className="mb-6 flex justify-center">
+          <button
+            onClick={() => navigate("/login")}
+            className="flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Voltar ao login
+          </button>
+        </div>
+
         <div className="text-center mb-8">
           <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg shadow-emerald-200 mb-4">
             <Zap className="h-8 w-8 text-white" />
@@ -230,6 +255,17 @@ export function Cadastro() {
                     </button>
                   </div>
                 ))}
+              </div>
+              <div className="mt-8 text-center">
+                <p className="text-gray-600">
+                  Já possui uma conta?{" "}
+                  <button
+                    onClick={() => navigate("/login")}
+                    className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors"
+                  >
+                    Faça login
+                  </button>
+                </p>
               </div>
             </div>
           )}
@@ -349,6 +385,15 @@ export function Cadastro() {
                     </button>
                   </div>
                 </form>
+                <div className="mt-6 text-center text-sm text-gray-600">
+                  Já possui uma conta?{" "}
+                  <button
+                    onClick={() => navigate("/login")}
+                    className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors"
+                  >
+                    Faça login
+                  </button>
+                </div>
               </div>
             </div>
           )}
@@ -472,6 +517,15 @@ export function Cadastro() {
                   >
                     {loading ? "Processando..." : "Finalizar assinatura"}
                     {!loading && <ArrowRight className="h-5 w-5" />}
+                  </button>
+                </div>
+                <div className="mt-6 text-center text-sm text-gray-600">
+                  Prefere fazer login com uma conta existente?{" "}
+                  <button
+                    onClick={() => navigate("/login")}
+                    className="text-emerald-600 font-semibold hover:text-emerald-700 transition-colors"
+                  >
+                    Clique aqui
                   </button>
                 </div>
               </div>

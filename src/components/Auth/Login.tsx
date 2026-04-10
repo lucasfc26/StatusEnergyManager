@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../../store";
 import { Zap, Eye, EyeOff, ArrowRight } from "lucide-react";
@@ -9,19 +9,52 @@ export function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useStore();
+  const { login, isAuthenticated } = useStore();
+
+  // Restaura credenciais salvas ao carregar
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("loginEmail");
+    const savedPassword = localStorage.getItem("loginPassword");
+    if (savedEmail && savedPassword) {
+      setEmail(savedEmail);
+      setPassword(savedPassword);
+      setRememberMe(true);
+    }
+  }, []);
+
+  // Se já está autenticado, redireciona para dashboard
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     if (!email || !password) {
       setError("Preencha todos os campos");
+      setLoading(false);
       return;
     }
 
+    // Salva ou remove credenciais baseado no checkbox
+    if (rememberMe) {
+      localStorage.setItem("loginEmail", email);
+      localStorage.setItem("loginPassword", password);
+    } else {
+      localStorage.removeItem("loginEmail");
+      localStorage.removeItem("loginPassword");
+    }
+
     const success = await login(email, password);
+    setLoading(false);
+
     if (success) {
       navigate("/");
     } else {
@@ -98,9 +131,11 @@ export function Login() {
             </div>
 
             <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2">
+              <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
                   className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
                 />
                 <span className="text-sm text-gray-600">Lembrar-me</span>
@@ -115,10 +150,11 @@ export function Login() {
 
             <button
               type="submit"
-              className="w-full flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-3 text-white font-semibold shadow-lg shadow-emerald-200 hover:shadow-xl hover:shadow-emerald-300 transition-all duration-200 hover:-translate-y-0.5"
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-3 text-white font-semibold shadow-lg shadow-emerald-200 hover:shadow-xl hover:shadow-emerald-300 transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Entrar
-              <ArrowRight className="h-5 w-5" />
+              {loading ? "Entrando..." : "Entrar"}
+              {!loading && <ArrowRight className="h-5 w-5" />}
             </button>
           </form>
 

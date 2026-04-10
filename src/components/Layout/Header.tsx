@@ -1,5 +1,6 @@
 import { Moon, Sun, LogOut, Bell, User } from "lucide-react";
 import { useStore } from "../../store";
+import { getRoleLabel } from "../../utils/permissions";
 import Logo from "../../assets/Logo.png";
 
 export function Header() {
@@ -63,7 +64,7 @@ export function Header() {
                 {user?.nome}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                {user?.plano}
+                {user?.role ? getRoleLabel(user.role) : "Carregando..."}
               </p>
             </div>
           </div>

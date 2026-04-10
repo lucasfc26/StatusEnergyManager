@@ -8,6 +8,8 @@ import {
   CalendarDays,
 } from "lucide-react";
 import { cn } from "../../utils/cn";
+import { useStore } from "../../store";
+import { getRoleLabel } from "../../utils/permissions";
 
 const menuItems = [
   {
@@ -33,9 +35,9 @@ const menuItems = [
       {
         path: "/exemplo-extracoes",
         icon: FileText,
-        label: "Exemplo de Extrações",
+        label: "Extração Individual",
       },
-      { path: "/extracoes", icon: FileText, label: "Extrator" },
+      { path: "/extracoes", icon: FileText, label: "Extrator de Dados" },
     ],
   },
   {
@@ -45,6 +47,33 @@ const menuItems = [
 ];
 
 export function Sidebar() {
+  const { user, clientes, ucs } = useStore();
+
+  // Calcula quantos clientes este usuário pode ver
+  let clientesVisiveis = 0;
+  if (user?.role === "administrador") {
+    clientesVisiveis = clientes.length;
+  } else if (user?.role === "profissional") {
+    clientesVisiveis = clientes.filter((c) => c.user_id === user.id).length;
+  }
+  // Cliente não vê clientes, só UCs
+
+  // Calcula quantas UCs este usuário pode ver
+  let ucsVisiveis = 0;
+  if (user?.role === "administrador") {
+    ucsVisiveis = ucs.length;
+  } else if (user?.role === "profissional") {
+    ucsVisiveis = ucs.filter((u) => u.user_id === user.id).length;
+  } else if (user?.role === "cliente") {
+    ucsVisiveis = ucs.filter((u) => u.cliente_user_id === user.id).length;
+  }
+
+  // Percentual de clientes para a barra de progresso (considerando o limite)
+  const clientesPercentual =
+    user?.limite_clientes && user?.limite_clientes > 0
+      ? Math.min((clientesVisiveis / user.limite_clientes) * 100, 100)
+      : 0;
+
   return (
     <aside className="fixed left-0 top-16 bottom-0 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
       <nav className="p-4 space-y-6">
@@ -80,17 +109,23 @@ export function Sidebar() {
       <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
         <div className="rounded-lg bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 p-4">
           <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400">
-            Plano Profissional
+            {user?.role ? getRoleLabel(user.role) : "Carregando..."}
           </p>
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            100 clientes / 500 UCs
+            {clientes.length} cliente{clientes.length !== 1 ? "s" : ""} /{" "}
+            {ucs.length} UC
+            {ucs.length !== 1 ? "s" : ""}
           </p>
           <div className="mt-3">
             <div className="h-1.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
-              <div className="h-1.5 w-1/4 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600"></div>
+              <div
+                className="h-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 transition-all"
+                style={{ width: `${clientesPercentual}%` }}
+              ></div>
             </div>
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              5 de 100 clientes
+              {clientesVisiveis} de {clientes.length} cliente
+              {clientes.length !== 1 ? "s" : ""}
             </p>
           </div>
         </div>

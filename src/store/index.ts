@@ -67,6 +67,18 @@ export const useStore = create<AppState>((set, get) => ({
       password,
     });
     if (error || !data.user) return false;
+
+    // Recupera o role do usuário
+    const { data: roleData } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", data.user.id)
+      .single();
+
+    const role =
+      (roleData?.role as "administrador" | "profissional" | "cliente") ||
+      "cliente";
+
     set({
       isAuthenticated: true,
       user: {
@@ -78,6 +90,7 @@ export const useStore = create<AppState>((set, get) => ({
         status_assinatura: "ativa",
         limite_clientes: 100,
         limite_ucs: 500,
+        role,
         created_at: data.user.created_at,
       },
     });

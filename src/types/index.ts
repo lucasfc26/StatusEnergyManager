@@ -7,6 +7,7 @@ export interface User {
   status_assinatura: "ativa" | "pendente" | "cancelada";
   limite_clientes: number;
   limite_ucs: number;
+  role: "administrador" | "profissional" | "cliente";
   created_at: string;
 }
 

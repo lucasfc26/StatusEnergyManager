@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useStore } from "./store";
 import { supabase } from "./lib/supabase";
@@ -26,6 +26,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const { fetchClientes, fetchUCs, darkMode } = useStore();
+  const [isSessionLoading, setIsSessionLoading] = useState(true);
 
   // Sincroniza o tema com a tag html quando darkMode muda
   useEffect(() => {
@@ -39,54 +40,105 @@ export default function App() {
 
   // Restaura o tema salvo e sessão ativa do Supabase ao recarregar a página
   useEffect(() => {
-    // Restaura o tema do localStorage apenas na primeira renderização
-    const savedDarkMode = localStorage.getItem("darkMode");
-    if (savedDarkMode !== null) {
-      const isDark = savedDarkMode === "true";
-      useStore.setState({ darkMode: isDark });
-      if (isDark) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-    }
+    let isMounted = true;
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        useStore.setState({
-          isAuthenticated: true,
-          user: {
-            id: session.user.id,
-            nome: session.user.user_metadata?.nome ?? session.user.email ?? "",
-            email: session.user.email ?? "",
-            empresa: session.user.user_metadata?.empresa ?? "",
-            plano: "profissional",
-            status_assinatura: "ativa",
-            limite_clientes: 100,
-            limite_ucs: 500,
-            created_at: session.user.created_at,
-          },
-        });
-        fetchClientes();
-        fetchUCs();
+    const restoreSession = async () => {
+      try {
+        // Restaura o tema do localStorage apenas na primeira renderização
+        const savedDarkMode = localStorage.getItem("darkMode");
+        if (savedDarkMode !== null) {
+          const isDark = savedDarkMode === "true";
+          useStore.setState({ darkMode: isDark });
+          if (isDark) {
+            document.documentElement.classList.add("dark");
+          } else {
+            document.documentElement.classList.remove("dark");
+          }
+        }
+
+        // Restaura a sessão ativa do Supabase
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (isMounted) {
+          if (session?.user) {
+            // Recupera o role do usuário
+            const { data: roleData } = await supabase
+              .from("user_roles")
+              .select("role")
+              .eq("user_id", session.user.id)
+              .single();
+
+            const role =
+              (roleData?.role as
+                | "administrador"
+                | "profissional"
+                | "cliente") || "cliente";
+
+            useStore.setState({
+              isAuthenticated: true,
+              user: {
+                id: session.user.id,
+                nome:
+                  session.user.user_metadata?.nome ?? session.user.email ?? "",
+                email: session.user.email ?? "",
+                empresa: session.user.user_metadata?.empresa ?? "",
+                plano: "profissional",
+                status_assinatura: "ativa",
+                limite_clientes: 100,
+                limite_ucs: 500,
+                role,
+                created_at: session.user.created_at,
+              },
+            });
+            await fetchClientes();
+            await fetchUCs();
+          }
+          setIsSessionLoading(false);
+        }
+      } catch {
+        if (isMounted) {
+          setIsSessionLoading(false);
+        }
       }
-    });
+    };
+
+    restoreSession();
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
-        useStore.setState({
-          isAuthenticated: false,
-          user: null,
-          clientes: [],
-          ucs: [],
-        });
+      if (isMounted) {
+        if (!session) {
+          useStore.setState({
+            isAuthenticated: false,
+            user: null,
+            clientes: [],
+            ucs: [],
+          });
+        }
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, [fetchClientes, fetchUCs]);
+
+  // Mostra tela de carregamento enquanto verifica a sessão
+  if (isSessionLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg shadow-emerald-200 mb-4 animate-pulse">
+            <div className="h-8 w-8 bg-white/20 rounded-full" />
+          </div>
+          <p className="text-gray-600 font-medium">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <BrowserRouter>
