@@ -1,4 +1,5 @@
 import { useStore } from "../../store";
+import { useState } from "react";
 import {
   Users,
   Zap,
@@ -7,6 +8,7 @@ import {
   DollarSign,
   Leaf,
   Calendar,
+  X,
 } from "lucide-react";
 import {
   AreaChart,
@@ -63,23 +65,68 @@ const statusFaturaData = [
 
 export function Dashboard() {
   const { clientes, ucs, faturas } = useStore();
+  const [filtroCliente, setFiltroCliente] = useState<string | null>(null);
+  const [filtroGeradora, setFiltroGeradora] = useState(true);
+  const [filtroBeneficiaria, setFiltroBeneficiaria] = useState(true);
 
-  const totalClientes = clientes.length;
-  const totalUCs = ucs.length;
+  // Filtra UCs baseado nos filtros aplicados
+  const ucsFiltradasPorTipo = ucs.filter((uc) => {
+    if (uc.tipo_uc === "Geradora" && !filtroGeradora) return false;
+    if (uc.tipo_uc === "Beneficiária" && !filtroBeneficiaria) return false;
+    return true;
+  });
+
+  // Filtra UCs por cliente selecionado
+  const ucsFiltradasPorCliente = filtroCliente
+    ? ucsFiltradasPorTipo.filter((uc) => uc.cliente_id === filtroCliente)
+    : ucsFiltradasPorTipo;
+
+  // Filtra clientes baseado no filtro selecionado
+  const clientesFiltradasPorFiltro = filtroCliente
+    ? clientes.filter((c) => c.id === filtroCliente)
+    : clientes;
+
+  const totalClientes = clientesFiltradasPorFiltro.length;
+  const totalUCs = ucsFiltradasPorCliente.length;
   const faturasHoje = faturas.filter(
-    (f) => f.data_vencimento === new Date().toISOString().split("T")[0],
+    (f) =>
+      f.data_vencimento === new Date().toISOString().split("T")[0] &&
+      (!filtroCliente ||
+        clientes.find((c) => c.id === filtroCliente && c.id === f.cliente_id)),
   ).length;
   const faturasExtraidas = faturas.filter(
-    (f) => f.status === "Extraída",
+    (f) =>
+      f.status === "Extraída" &&
+      (!filtroCliente ||
+        clientes.find((c) => c.id === filtroCliente && c.id === f.cliente_id)),
   ).length;
-  const valorTotalFaturado = faturas.reduce((acc, f) => acc + f.valor_total, 0);
+  const valorTotalFaturado = faturas.reduce(
+    (acc, f) =>
+      acc +
+      (filtroCliente
+        ? clientes.find((c) => c.id === filtroCliente && c.id === f.cliente_id)
+          ? f.valor_total
+          : 0
+        : f.valor_total),
+    0,
+  );
   const economiaGerada = faturas.reduce(
-    (acc, f) => acc + f.valor_compensado,
+    (acc, f) =>
+      acc +
+      (filtroCliente
+        ? clientes.find((c) => c.id === filtroCliente && c.id === f.cliente_id)
+          ? f.valor_compensado
+          : 0
+        : f.valor_compensado),
     0,
   );
 
   const proximasFaturas = faturas
-    .filter((f) => f.status === "Pendente" || f.status === "Extraída")
+    .filter(
+      (f) =>
+        (f.status === "Pendente" || f.status === "Extraída") &&
+        (!filtroCliente || f.cliente_id === filtroCliente),
+    )
     .sort(
       (a, b) =>
         new Date(a.data_vencimento).getTime() -
@@ -96,6 +143,75 @@ export function Dashboard() {
         <p className="text-gray-500 dark:text-gray-400">
           Visão geral do seu negócio
         </p>
+      </div>
+
+      {/* Filtros */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+        <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
+          <div className="flex-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Filtrar por Cliente
+            </label>
+            <div className="relative">
+              <select
+                value={filtroCliente || ""}
+                onChange={(e) => setFiltroCliente(e.target.value || null)}
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-900 dark:text-white dark:bg-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none"
+              >
+                <option value="">Todos os Clientes</option>
+                {clientes.map((cliente) => (
+                  <option key={cliente.id} value={cliente.id}>
+                    {cliente.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex items-center gap-2">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={filtroGeradora}
+                  onChange={(e) => setFiltroGeradora(e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Geradoras
+                </span>
+              </label>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={filtroBeneficiaria}
+                  onChange={(e) => setFiltroBeneficiaria(e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Beneficiárias
+                </span>
+              </label>
+            </div>
+
+            {(filtroCliente || !filtroGeradora || !filtroBeneficiaria) && (
+              <button
+                onClick={() => {
+                  setFiltroCliente(null);
+                  setFiltroGeradora(true);
+                  setFiltroBeneficiaria(true);
+                }}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              >
+                <X className="h-4 w-4" />
+                Limpar Filtros
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -272,7 +388,22 @@ export function Dashboard() {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={ucTipoData}
+                  data={[
+                    {
+                      name: "Beneficiária",
+                      value: ucsFiltradasPorCliente.filter(
+                        (u) => u.tipo_uc === "Beneficiária",
+                      ).length,
+                      color: "#10b981",
+                    },
+                    {
+                      name: "Geradora",
+                      value: ucsFiltradasPorCliente.filter(
+                        (u) => u.tipo_uc === "Geradora",
+                      ).length,
+                      color: "#0d9488",
+                    },
+                  ]}
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
@@ -280,7 +411,22 @@ export function Dashboard() {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {ucTipoData.map((entry, index) => (
+                  {[
+                    {
+                      name: "Beneficiária",
+                      value: ucsFiltradasPorCliente.filter(
+                        (u) => u.tipo_uc === "Beneficiária",
+                      ).length,
+                      color: "#10b981",
+                    },
+                    {
+                      name: "Geradora",
+                      value: ucsFiltradasPorCliente.filter(
+                        (u) => u.tipo_uc === "Geradora",
+                      ).length,
+                      color: "#0d9488",
+                    },
+                  ].map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -295,7 +441,22 @@ export function Dashboard() {
             </ResponsiveContainer>
           </div>
           <div className="flex justify-center gap-6 mt-4">
-            {ucTipoData.map((item) => (
+            {[
+              {
+                name: "Beneficiária",
+                value: ucsFiltradasPorCliente.filter(
+                  (u) => u.tipo_uc === "Beneficiária",
+                ).length,
+                color: "#10b981",
+              },
+              {
+                name: "Geradora",
+                value: ucsFiltradasPorCliente.filter(
+                  (u) => u.tipo_uc === "Geradora",
+                ).length,
+                color: "#0d9488",
+              },
+            ].map((item) => (
               <div key={item.name} className="flex items-center gap-2">
                 <div
                   className="w-3 h-3 rounded-full"
