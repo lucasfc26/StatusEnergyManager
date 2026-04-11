@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { ToastContainer } from "./utils/toast";
 import { useStore } from "./store";
 import { supabase } from "./lib/supabase";
 import { Layout } from "./components/Layout";
@@ -8,6 +9,7 @@ import { Cadastro } from "./components/Auth/Cadastro";
 import { Dashboard } from "./components/Dashboard";
 import { Clientes } from "./components/Clientes";
 import { UCs } from "./components/UCs";
+import RateioPage from "./components/Rateio";
 import { Agenda } from "./components/Agenda";
 import { Extracoes } from "./components/Extracoes";
 import { ExemploProcessamentoFaturas } from "./components/Extracoes/ExemploProcessamento";
@@ -142,6 +144,17 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
@@ -159,6 +172,7 @@ export default function App() {
           <Route path="ucs" element={<UCs />} />
           <Route path="agenda" element={<Agenda />} />
           <Route path="resumo-extracoes" element={<ResumoExtracoes />} />
+          <Route path="rateios" element={<RateioPage />} />
           <Route
             path="exemplo-extracoes"
             element={<ExemploProcessamentoFaturas />}

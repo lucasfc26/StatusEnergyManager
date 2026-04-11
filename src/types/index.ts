@@ -87,3 +87,25 @@ export interface Plano {
   limite_ucs: number;
   recursos: string[];
 }
+
+export interface Rateio {
+  id: string;
+  user_id: string;
+  cliente_id: string;
+  geradora_id: string;
+  beneficiarias_ucs: string[];
+  beneficiarias_rateios: number[];
+  data_atual: string;
+  status: boolean;
+  created_at: string;
+  updated_at: string;
+  geradora?: UnidadeConsumidora;
+  cliente?: Cliente;
+  beneficiarias?: UnidadeConsumidora[];
+}
+
+export interface RateioBeneficiaria {
+  uc_id: string;
+  percentual: number;
+  uc?: UnidadeConsumidora;
+}

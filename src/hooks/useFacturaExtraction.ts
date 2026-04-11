@@ -1,9 +1,7 @@
-import { useState, useCallback } from "react";
+﻿import { useState, useCallback } from "react";
 import {
-  extrairDadosGrupoA,
-  extrairDadosGrupoB,
-  extrairDadosRuralIrrigante,
-  extrairDadosBranca,
+  extractTextFromPdfDetect,
+  extrairUCRobusto,
 } from "../components/Extracoes/extractionFunctions";
 import type { ExtractionResult, Fatura } from "../types/faturas";
 
@@ -25,7 +23,8 @@ export function useFacturaExtraction(options?: UseExtractionOptions) {
   }, []);
 
   /**
-   * Detecta o tipo de fatura e extrai os dados
+   * Abre o PDF, lê as linhas e extrai a UC.
+   * A classificação e extração dos demais campos são feitas pelo backend.
    */
   const detectAndExtract = useCallback(
     async (
@@ -36,21 +35,23 @@ export function useFacturaExtraction(options?: UseExtractionOptions) {
         setProgress(10);
         options?.onProgress?.(10);
 
-        // Detecta tipo pelo conteúdo do PDF antes de tentar os extractores
-        const { extractTextFromPdfDetect } =
-          await import("../components/Extracoes/extractionFunctions");
-        const linhasDeteccao = await extractTextFromPdfDetect(pdfData, arquivo);
-        const rawLines = linhasDeteccao; // guarda para debug
-        const textoCompleto = linhasDeteccao.join(" ").toUpperCase();
+        const linhas = await extractTextFromPdfDetect(pdfData, arquivo);
 
-        // Grupo B: classificação começa com B (B1, B2, B3, B4)
-        // Indicadores exclusivos: "B1 RESIDENCIAL", "B2 ", "MONOFÁSICO"/"TRIFÁSICO" SEM demanda
+        setProgress(50);
+        options?.onProgress?.(50);
+
+        const unidade = extrairUCRobusto(linhas);
+
+        const textoCompleto = linhas.join(" ").toUpperCase();
+
+        // Detecta tipo para classificação informativa
         const isGrupoB =
           textoCompleto.includes("B1 RESIDENCIAL") ||
           textoCompleto.includes("B1 RESIDENCIAL-CONV") ||
           /\bB[1234]\s/.test(textoCompleto);
 
-        // Grupo A: tem itens de DEMANDA faturada (não apenas "HFP" na tabela de medição)
+        const isRural = !isGrupoB && textoCompleto.includes("RURAL IRRIGANTE");
+        const isBranca = !isGrupoB && textoCompleto.includes("TARIFA BRANCA");
         const isGrupoA =
           !isGrupoB &&
           (textoCompleto.includes("DEMANDA G ") ||
@@ -59,62 +60,31 @@ export function useFacturaExtraction(options?: UseExtractionOptions) {
             textoCompleto.includes("TUSD FP ") ||
             /CONSUMO\s+FORA\s+PONTA/.test(textoCompleto));
 
-        const isRural = !isGrupoB && textoCompleto.includes("RURAL IRRIGANTE");
-        const isBranca = !isGrupoB && textoCompleto.includes("TARIFA BRANCA");
-
-        let fatura = null;
-        let tipo: ExtractionResult["tipo"] = "grupoB";
-
-        if (isGrupoB) {
-          tipo = "grupoB";
-          fatura = await extrairDadosGrupoB(pdfData, arquivo);
-        } else if (isRural) {
-          tipo = "ruralIrrigante";
-          fatura = await extrairDadosRuralIrrigante(pdfData, arquivo);
-        } else if (isBranca) {
-          tipo = "branca";
-          fatura = await extrairDadosBranca(pdfData, arquivo);
-        } else if (isGrupoA) {
-          tipo = "grupoA";
-          fatura = await extrairDadosGrupoA(pdfData, arquivo);
-        } else {
-          // Padrão: Grupo B (mais comum)
-          tipo = "grupoB";
-          fatura = await extrairDadosGrupoB(pdfData, arquivo);
-        }
-
-        setProgress(50);
-        options?.onProgress?.(50);
-
-        // Fallback: se não extraiu UC, tenta os demais tipos
-        if (!fatura || !fatura.numero_uc) {
-          fatura = await extrairDadosGrupoA(pdfData, arquivo);
-          tipo = "grupoA";
-        }
-        if (!fatura || !fatura.numero_uc) {
-          fatura = await extrairDadosRuralIrrigante(pdfData, arquivo);
-          tipo = "ruralIrrigante";
-        }
-        if (!fatura || !fatura.numero_uc) {
-          fatura = await extrairDadosBranca(pdfData, arquivo);
-          tipo = "branca";
-        }
+        let tipo: ExtractionResult["tipo"];
+        if (isGrupoB) tipo = "grupoB";
+        else if (isRural) tipo = "ruralIrrigante";
+        else if (isBranca) tipo = "branca";
+        else if (isGrupoA) tipo = "grupoA";
+        else tipo = "grupoB";
 
         setProgress(90);
         options?.onProgress?.(90);
 
-        const success = !!fatura && !!fatura.numero_uc;
+        const success = !!unidade;
+
+        const fatura: Partial<Fatura> = { unidade };
+
         const result: ExtractionResult = {
           success,
-          fatura: fatura as Fatura | null,
+          fatura: success ? (fatura as Fatura) : null,
           tipo: success ? tipo : undefined,
           arquivoNome: arquivo,
           dataExtracao: new Date().toISOString(),
-          rawLines,
+          rawLines: linhas,
         };
 
         if (!result.success) {
-          result.error = `Não foi possível extrair dados válidos de ${arquivo}`;
+          result.error = `Não foi possível extrair UC válida de ${arquivo}`;
           options?.onError?.(result.error);
         } else {
           options?.onSuccess?.(result);
@@ -150,7 +120,7 @@ export function useFacturaExtraction(options?: UseExtractionOptions) {
         setLoading(true);
         resetState();
 
-        const results: ExtractionResult[] = [];
+        const allResults: ExtractionResult[] = [];
 
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
@@ -160,10 +130,10 @@ export function useFacturaExtraction(options?: UseExtractionOptions) {
 
           try {
             const result = await detectAndExtract(file, file.name);
-            results.push(result);
+            allResults.push(result);
           } catch (err) {
             const errorMsg = `Erro ao processar ${file.name}: ${err instanceof Error ? err.message : String(err)}`;
-            results.push({
+            allResults.push({
               success: false,
               fatura: null,
               error: errorMsg,
@@ -173,11 +143,11 @@ export function useFacturaExtraction(options?: UseExtractionOptions) {
           }
         }
 
-        setResults(results);
+        setResults(allResults);
         setProgress(100);
         options?.onProgress?.(100);
 
-        return results;
+        return allResults;
       } catch (err) {
         const errorMsg = `Erro ao processar múltiplos arquivos: ${err instanceof Error ? err.message : String(err)}`;
         setError(errorMsg);
@@ -236,13 +206,7 @@ export function useFacturaExtraction(options?: UseExtractionOptions) {
       branca: results.filter((r) => r.tipo === "branca" && r.success).length,
     };
 
-    return {
-      total,
-      successCount,
-      errorCount,
-      successRate,
-      byType,
-    };
+    return { total, successCount, errorCount, successRate, byType };
   }, [results]);
 
   /**

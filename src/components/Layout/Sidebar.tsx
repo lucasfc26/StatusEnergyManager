@@ -6,6 +6,7 @@ import {
   FileText,
   Settings,
   CalendarDays,
+  Split,
 } from "lucide-react";
 import { cn } from "../../utils/cn";
 import { useStore } from "../../store";
@@ -21,6 +22,7 @@ const menuItems = [
     items: [
       { path: "/clientes", icon: Users, label: "Clientes" },
       { path: "/ucs", icon: Zap, label: "UC's" },
+      { path: "/rateios", icon: Split, label: "Rateios" },
     ],
   },
   {

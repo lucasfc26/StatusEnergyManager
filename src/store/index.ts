@@ -40,7 +40,8 @@ interface AppState {
   updateUC: (id: string, uc: Partial<UnidadeConsumidora>) => Promise<void>;
   deleteUC: (id: string) => Promise<void>;
 
-  // Actions â€“ Faturas
+  // Actions – Faturas
+  fetchFaturas: () => Promise<void>;
   addFatura: (fatura: Omit<Fatura, "id" | "created_at">) => void;
   updateFatura: (id: string, fatura: Partial<Fatura>) => void;
 }
@@ -96,6 +97,7 @@ export const useStore = create<AppState>((set, get) => ({
     });
     await get().fetchClientes();
     await get().fetchUCs();
+    await get().fetchFaturas();
     return true;
   },
 
@@ -255,7 +257,35 @@ export const useStore = create<AppState>((set, get) => ({
     }));
   },
 
-  // â”€â”€ Faturas (local â€“ ainda sem edge function) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // Faturas (carrega de faturas_grupo_a como exemplo)
+  fetchFaturas: async () => {
+    const { data, error } = await supabase.from("faturas_grupo_a").select("*");
+
+    if (error) {
+      console.error("Erro ao carregar faturas:", error);
+      return;
+    }
+
+    const faturas: Fatura[] = (data ?? []).map((row: any) => ({
+      id: row.id,
+      uc_id: row.uc_id,
+      cliente_id: row.user_id,
+      mes_referencia: row.mes_referencia,
+      data_vencimento: "",
+      data_leitura: row.data_leitura,
+      valor_total: row.subtotal_faturamento ?? 0,
+      energia_kwh: 0,
+      energia_compensada_kwh: 0,
+      valor_compensado: row.beneficio_liquido ?? 0,
+      status: "Pendente",
+      arquivo_url: undefined,
+      created_at: row.created_at,
+    }));
+
+    set({ faturas });
+  },
+
+  // Faturas (local - ainda sem edge function)
 
   addFatura: (fatura) => {
     const newFatura: Fatura = {
